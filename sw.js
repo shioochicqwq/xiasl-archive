@@ -96,4 +96,4 @@ async function replay(request){
  text=/<body\b/i.test(text)?text.replace(/(<body\b[^>]*>)/i,'$1'+bar):bar+text;
  return new Response(text,{headers});
 }
-self.addEventListener('fetch',e=>{let u=new URL(e.request.url);if(u.origin!==self.location.origin||!u.pathname.startsWith(BASE))return;let p=u.pathname.slice(BASE.length);if(['sw.js','client.js','search.js','index.json.gz','search.json.gz','build-report.json'].includes(p)||/^data\/[0-9a-f]{64}\.gz$/.test(p)||p.startsWith('c/'))return;e.respondWith(replay(e.request).catch(err=>html(shell('加载失败','<p>'+escape(err.message)+'</p><button onclick="location.reload()">重试</button>'),503)));});
+self.addEventListener('fetch',e=>{let u=new URL(e.request.url);if(u.origin!==self.location.origin||!u.pathname.startsWith(BASE))return;let p=u.pathname.slice(BASE.length);if(['sw.js','client.js','search.js','index.json.gz','search.json.gz','build-report.json'].includes(p)||/^data\/[0-9a-f]{64}\.gz$/.test(p)||p.startsWith('c/')||p.startsWith('s/'))return;e.respondWith(replay(e.request).catch(err=>html(shell('加载失败','<p>'+escape(err.message)+'</p><button onclick="location.reload()">重试</button>'),503)));});

@@ -1,3 +1,15 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>夏世莲网站历史存档</title><body style="max-width:800px;margin:50px auto;font:16px sans-serif"><h1>夏世莲网站历史存档</h1><p id="status">正在载入原版网站…</p><noscript>此浏览版需要启用 JavaScript。</noscript><script>
-(async()=>{try{if(!('serviceWorker' in navigator)||!('DecompressionStream' in window))throw Error('请使用支持 Service Worker 和 gzip 解压的现代浏览器。');await navigator.serviceWorker.register('/xiasl-archive/sw.js',{scope:'/xiasl-archive/'});await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true}));location.reload();}catch(e){document.getElementById('status').textContent=e.message;}})();
+(async()=>{
+const el=document.getElementById('status');
+const fail=(msg)=>{el.textContent=msg;const b=document.createElement('button');b.textContent='清理缓存并重试';b.style.cssText='margin-top:1em;padding:.4em .9em;font-size:1em';b.onclick=async()=>{try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();if(window.caches)for(const k of await caches.keys())await caches.delete(k);}catch(e){}location.reload();};el.after(b);};
+try{
+ if(!('serviceWorker' in navigator)||!('DecompressionStream' in window))throw Error('这个浏览器不支持 Service Worker 或 gzip 解压。请改用 Chrome / Edge / Safari 打开。');
+ await navigator.serviceWorker.register('/xiasl-archive/sw.js',{scope:'/xiasl-archive/'});
+ await Promise.race([
+  (async()=>{await navigator.serviceWorker.ready;if(!navigator.serviceWorker.controller)await new Promise(r=>navigator.serviceWorker.addEventListener('controllerchange',r,{once:true}));})(),
+  new Promise((_,rej)=>setTimeout(()=>rej(Error('载入超时:Service Worker 没有接管页面。可能是浏览器省流/隐私模式或内置浏览器拦截了它,请换 Chrome 或关闭省流后重试。')),15000))
+ ]);
+ location.reload();
+}catch(e){fail(e.message);}
+})();
 </script></body></html>
